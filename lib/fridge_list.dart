@@ -10,9 +10,8 @@ import 'package:cron/cron.dart';
 
 import './add_item_page.dart';
 import './fridge_item.dart';
-import './reducer.dart';
-import 'package:eatit/actions.dart';
-import 'package:eatit/reducer.dart';
+import 'package:eatit/app_state.dart';
+import 'package:eatit/fridge/actions/fridge_actions.dart';
 
 class FridgeList extends StatelessWidget {
   @override
@@ -24,7 +23,7 @@ class FridgeList extends StatelessWidget {
         title: Center(child: Text("Your fridge"),),
       ),
       backgroundColor: Color(0xffc3e7f4),
-      body: StoreConnector<FridgeState, FridgeState>(
+      body: StoreConnector<AppState, AppState>(
         converter: (store) => store.state,
         builder: (context, state) {
           return Center(
@@ -32,10 +31,10 @@ class FridgeList extends StatelessWidget {
             // in the middle of the parent.
             child: ListView.separated(
                 padding: const EdgeInsets.all(8),
-                itemCount: state.fridgeItems.length,
+                itemCount: state.fridgeState.fridgeItems.length,
                 separatorBuilder: (BuildContext context, int index) => const Divider(height: 8),
                 itemBuilder: (BuildContext context, int index) {
-                  return this.getWrappedItem(context, index, state.fridgeItems);
+                  return this.getWrappedItem(context, index, state.fridgeState.fridgeItems);
                 }
             ),
           );
@@ -44,7 +43,8 @@ class FridgeList extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddItemPage(context: context),
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -55,9 +55,8 @@ class FridgeList extends StatelessWidget {
       key: Key(item.name),
       confirmDismiss: (DismissDirection direction) => this._showDialog(direction, context),
       onDismissed: (direction) {
-        StoreProvider.of<FridgeState>(context)
-            .dispatch(DeleteFridgeItemAction(item));
-
+        StoreProvider.of<AppState>(context)
+            .dispatch(DeleteFridgeItem(fridgeItem: item));
         Scaffold
             .of(context)
             .showSnackBar(SnackBar(content: Text("${item.name} removed")));
@@ -144,6 +143,7 @@ class FridgeList extends StatelessWidget {
           );
         },
       );
+      return res;
     }
 
     return false;

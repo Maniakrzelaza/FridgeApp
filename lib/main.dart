@@ -1,5 +1,4 @@
 import 'package:eatit/fridge_item.dart';
-import 'package:eatit/reducer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
@@ -9,9 +8,9 @@ import 'package:workmanager/workmanager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rxdart/subjects.dart';
 
-import './reducer.dart';
 import './app.dart';
-import './store.dart';
+import 'package:eatit/app_state.dart';
+import 'package:eatit/app_reducer.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -73,25 +72,10 @@ Future<void> main() async {
         selectNotificationSubject.add(payload);
       });
 
-  runApp(new EatItApp(new SingletonStore().getStore()));
-}
+  final store = Store<AppState>(appReducer,
+      initialState: AppState.initialState());
 
-
-void callbackDispatcher() async {
-  print('tera wyswietle state12');
-  print(new SingletonStore().getStore().state.fridgeItems.length);
-  new SingletonStore().getStore().state.fridgeItems.forEach((it) {
-    print(it.toString());
-  });
-
-
-  print('callbackDispatcherqqqqqqqqqqq');
-  Workmanager.executeTask((task, inputData) async {
-    print("BBBBBBBB" + DateTime.now().toString());
-    print(task);
-    await _showNotification();
-    return Future.value(true);
-  });
+  runApp(new EatItApp(store));
 }
 
 Future<void> _showNotification() async {
@@ -106,16 +90,13 @@ Future<void> _showNotification() async {
   payload: 'item x');
 }
 
-
-
-
 class EatItApp extends StatelessWidget {
-  final Store<FridgeState> store;
+  final Store<AppState> store;
   EatItApp(this.store);
 
   @override
   Widget build(BuildContext context) {
-    return new StoreProvider<FridgeState>(
+    return new StoreProvider<AppState>(
       store: store,
       child: MaterialApp(
         initialRoute: '/',

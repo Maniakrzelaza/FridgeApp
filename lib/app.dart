@@ -10,14 +10,12 @@ import 'package:cron/cron.dart';
 
 import './add_item_page.dart';
 import './fridge_item.dart';
-import './reducer.dart';
-import 'package:eatit/actions.dart';
-import 'package:eatit/reducer.dart';
 import 'package:eatit/fridge_list.dart';
 import 'package:eatit/settings_page.dart';
+import 'package:eatit/app_state.dart';
 
 class App extends StatefulWidget {
-  final Store<FridgeState> store;
+  final Store<AppState> store;
 
   App(this.store, {Key key}) : super(key: key);
 
@@ -26,7 +24,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  final Store<FridgeState> store;
+  final Store<AppState> store;
 
   int _selectedIndex = 0;
   _AppState(this.store);
@@ -66,8 +64,9 @@ class _AppState extends State<App> {
             title: Text('Settings'),
           ),
         ],
+        backgroundColor: Color(0xff00708D),
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue[800],
+        selectedItemColor: Colors.white,
         onTap: _onItemTapped,
       ),
     );
@@ -82,9 +81,9 @@ class _AppState extends State<App> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
     print('tera wyswietle state1234');
-    final store = StoreProvider.of<FridgeState>(context);
-    print(store.state.fridgeItems.length);
-    store.state.fridgeItems.forEach((it) {
+    final store = StoreProvider.of<AppState>(context);
+    print(store.state.fridgeState.fridgeItems.length);
+    store.state..fridgeState.fridgeItems.forEach((it) {
       print(it.toString());
     });
     await flutterLocalNotificationsPlugin.show(

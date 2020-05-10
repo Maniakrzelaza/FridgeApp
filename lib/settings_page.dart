@@ -7,12 +7,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'dart:async';
 import 'package:cron/cron.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import './add_item_page.dart';
 import './fridge_item.dart';
-import './reducer.dart';
-import 'package:eatit/actions.dart';
-import 'package:eatit/reducer.dart';
+import 'package:eatit/app_state.dart';
 
 class Settings extends StatelessWidget {
 
@@ -25,13 +25,19 @@ class Settings extends StatelessWidget {
         title: Center(child: Text("Settings"),),
       ),
       backgroundColor: Color(0xffc3e7f4),
-      body: StoreConnector<FridgeState, FridgeState>(
+      body: StoreConnector<AppState, AppState>(
         converter: (store) => store.state,
         builder: (context, state) {
           return Center(
             // Center is a layout widget. It takes a single child and positions it
             // in the middle of the parent.
-            child: Text('Laaaaaa'),
+            child: RaisedButton(
+              color: Colors.blue,
+              onPressed: () {
+                _selectNotificationTime(context);
+              },
+              child: Text("AAAAAa"),
+            ),
           );
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -39,10 +45,11 @@ class Settings extends StatelessWidget {
   }
 
   Future<Null> _selectNotificationTime(BuildContext context) async {
-    final TimeOfDay picked = await showTimePicker(
-      initialTime: TimeOfDay.now(),
-      context: context,
-    );
+    DatePicker.showTimePicker(context, showTitleActions: true, onChanged: (date) {
+      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) {
+      print('confirm $date');
+    }, currentTime: DateTime.now());
   }
 
 }

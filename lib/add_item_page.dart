@@ -10,8 +10,8 @@ import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import './fridge_item.dart';
-import './reducer.dart';
-import './actions.dart';
+import 'package:eatit/fridge/actions/fridge_actions.dart';
+import 'package:eatit/app_state.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -130,13 +130,13 @@ class _AddItemPageState extends State<AddItemPage> {
                   if (this.isCreating) {
                     FridgeItem fridgeItem = new FridgeItem(this.nameController.text, modelItem.startDate, modelItem.expireDate);
                     fridgeItem.dateOfNotification = this.getNotificationDate();
-                    StoreProvider.of<FridgeState>(context)
-                        .dispatch(CreateFridgeItemAction(fridgeItem));
+                    StoreProvider.of<AppState>(context)
+                        .dispatch(CreateFridgeItem(fridgeItem: fridgeItem));
                   } else {
                     FridgeItem fridgeItem = FridgeItem.of(modelItem.id, this.nameController.text, modelItem.startDate, modelItem.expireDate);
                     fridgeItem.dateOfNotification = this.getNotificationDate();
-                    StoreProvider.of<FridgeState>(context)
-                        .dispatch(UpdateFridgeItemAction(fridgeItem));
+                    StoreProvider.of<AppState>(context)
+                        .dispatch(UpdateFridgeItem(fridgeItem: fridgeItem));
                   }
                   Navigator.pop(context);
                 },
@@ -149,8 +149,8 @@ class _AddItemPageState extends State<AddItemPage> {
         visible: !this.isCreating,
         child: FloatingActionButton(
           onPressed: () {
-            StoreProvider.of<FridgeState>(context)
-                .dispatch(DeleteFridgeItemAction(modelItem));
+            StoreProvider.of<AppState>(context)
+                .dispatch(DeleteFridgeItem(fridgeItem: modelItem));
             Navigator.pop(context);
           },
           child: Icon(Icons.delete),
