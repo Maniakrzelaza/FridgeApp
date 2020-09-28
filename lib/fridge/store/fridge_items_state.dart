@@ -8,6 +8,10 @@ class FridgeItemState {
 
   const FridgeItemState({@required this.fridgeItems});
 
+  static FridgeItemState initial() {
+    return new FridgeItemState(fridgeItems: new List<FridgeItem>());
+  }
+
   @override
   String toString() {
     return 'DetailState: {photoUrl: $fridgeItems}';

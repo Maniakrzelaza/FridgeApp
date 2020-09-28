@@ -1,3 +1,8 @@
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/adapter.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +12,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'dart:async';
 import 'package:cron/cron.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
+import 'dart:convert';
+import 'package:dio/dio.dart';
 
 import './add_item_page.dart';
 import './fridge_item.dart';
@@ -21,6 +30,29 @@ class FridgeList extends StatelessWidget {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Center(child: Text("Your fridge"),),
+        actions: <Widget>[
+          // action button
+          IconButton(
+            icon: Icon(Icons.sync),
+            onPressed: () async {
+              print('aaaaaaa');
+              var url = 'https://kdondziak.pl/api/fridgeItem';
+
+              Dio dio = new Dio();
+              (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+                  (HttpClient client) {
+                client.badCertificateCallback =
+                    (X509Certificate cert, String host, int port) => true;
+                return client;
+              };
+              Response response = await dio.get(url);
+              this.saveSyncedItems(context, response);
+
+             // Response response = await dio.post(url, data: {'name': 'name1', 'startDate': '2008-12-03T10:15:30', 'endDate': '2009-12-03T10:15:30', 'expireDate' : '2007-12-03T10:15:30'});
+
+            },
+          ),
+        ],
       ),
       backgroundColor: Color(0xffc3e7f4),
       body: StoreConnector<AppState, AppState>(
@@ -46,6 +78,24 @@ class FridgeList extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,// This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void saveSyncedItems(BuildContext context, Response response) {
+
+    print(response.data);
+    List<dynamic> aaa = response.data;
+    StoreProvider.of<AppState>(context)
+        .dispatch(ResetFridgeItem());
+
+    for (LinkedHashMap item in aaa) {
+      print('aa');
+      print(item);
+      FridgeItem fridgeItem = FridgeItem.fromJson(item);
+      print(fridgeItem);
+          StoreProvider.of<AppState>(context)
+        .dispatch(CreateFridgeItem(fridgeItem: fridgeItem));
+    }
+
   }
 
   Widget getWrappedItem(BuildContext context, int index, List<FridgeItem> items) {

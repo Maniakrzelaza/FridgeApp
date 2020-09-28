@@ -14,3 +14,7 @@ class DeleteFridgeItem {
   final FridgeItem fridgeItem;
   DeleteFridgeItem({this.fridgeItem});
 }
+
+class ResetFridgeItem {
+  ResetFridgeItem();
+}

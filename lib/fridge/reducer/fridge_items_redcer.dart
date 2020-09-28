@@ -7,6 +7,8 @@ final fridgeReducer = combineReducers<FridgeItemState>([
   TypedReducer<FridgeItemState, CreateFridgeItem>(_createFridgeItem),
   TypedReducer<FridgeItemState, UpdateFridgeItem>(_updateFridgeItem),
   TypedReducer<FridgeItemState, DeleteFridgeItem>(_deleteFridgeItem),
+  TypedReducer<FridgeItemState, ResetFridgeItem>(_resetFridgeItem),
+
 ]);
 
 FridgeItemState _createFridgeItem(FridgeItemState state, CreateFridgeItem action) {
@@ -22,4 +24,8 @@ FridgeItemState _updateFridgeItem(FridgeItemState state, UpdateFridgeItem action
 FridgeItemState _deleteFridgeItem(FridgeItemState state, DeleteFridgeItem action) {
   return FridgeItemState(fridgeItems: state.fridgeItems
       .where((item) => item.id != action.fridgeItem.id).toList());
+}
+
+FridgeItemState _resetFridgeItem(FridgeItemState state, ResetFridgeItem resetFridgeItem) {
+  return FridgeItemState.initial();
 }
